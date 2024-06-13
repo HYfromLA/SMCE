@@ -1,4 +1,4 @@
-function [Data, LabelsGT] = SimData(DATAopts, j)
+function [Data, LabelsGT] = simdata(DATAopts, j)
 
 rng(j)  %rng('default')
 
@@ -18,10 +18,10 @@ if strcmp(DATAopts.Shape, 'Two Lines')
     Data2 = Noise2; Data2(:, 1) = Data2(:, 1) + Effective2;
     Data1 = Data1 * Rotation1; Data2 = Data2 * Rotation2; 
     Data = cat(1, Data1, Data2); LabelsGT = [repelem(1, n1) repelem(2, n2)]';
-    if D == 2 
-        figure; plot(Data(1:n1,1),Data(1:n1, 2), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),'.');
-        axis equal; axis off;
-    end
+    %if D == 2 
+    %    figure; plot(Data(1:n1,1),Data(1:n1, 2), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),'.');
+    %    axis equal; axis off; xlim([-.7, .7]); ylim([-.7, .7])
+    %end
 end
 
 if strcmp(DATAopts.Shape, 'Two Curves')
@@ -43,10 +43,11 @@ if strcmp(DATAopts.Shape, 'Two Curves')
     Data1 = Data1 * Rotation1; Data2 = Data2 * Rotation2; 
     Data2(:,1) = Data2(:,1)+R*sin(Theta(2)); Data2(:,2) = Data2(:,2)+R-R*cos(Theta(2)); 
     Data = cat(1, Data1, Data2); LabelsGT = [repelem(1, n1) repelem(2, n2)]';
-    %if D == 2
-    %    figure; plot(Data(1:n1,1),Data(1:n1,2), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),'.');
-    %    axis equal; axis off
-    %end
+    if D == 2
+        figure; plot(Data(1:n1,1),Data(1:n1,2), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),'.');
+        axis equal; xlim([-.1 .2]); ylim([-.1 .2]);
+        axis off; %xlim([-.1 .2]); ylim([-.1 .2]);
+    end
 end
 
 if strcmp(DATAopts.Shape, 'Dollar Sign')
@@ -100,15 +101,15 @@ if strcmp(DATAopts.Shape, 'Olympic Rings')
     D = DATAopts.AmbDim; Sigma = DATAopts.NoiseSigma; Angle = linspace(pi/4,9*pi/4,n1);
     %thetab = -pi/4; thetak = -pi/4; thetar = -pi/4;
 
-    xb = 2*(cos(Angle) * 1); yb = 2*(sin(Angle) * 1); %zb = cos(Angle + thetab) * 0.1;
+    xb = 1*(cos(Angle) * 1); yb = 1*(sin(Angle) * 1); %zb = cos(Angle + thetab) * 0.1;
 
-    xy = 2*(cos(Angle) * 1 + 10/9); yy = 2*(sin(Angle) * 1 - 10/9);
+    xy = 1*(cos(Angle) * 1 + 10/9); yy = 1*(sin(Angle) * 1 - 10/9);
 
-    xk = 2*(cos(Angle) * 1 + 20/9); yk = 2*(sin(Angle) * 1);  %zk = cos(Angle + thetak) * 0.1;
+    xk = 1*(cos(Angle) * 1 + 20/9); yk = 1*(sin(Angle) * 1);  %zk = cos(Angle + thetak) * 0.1;
 
-    xg = 2*(cos(Angle) * 1 + 30/9); yg = 2*(sin(Angle) * 1 - 10/9);
+    xg = 1*(cos(Angle) * 1 + 30/9); yg = 1*(sin(Angle) * 1 - 10/9);
 
-    xr = 2*(cos(Angle) * 1 + 40/9); yr = 2*(sin(Angle) * 1); %zr = cos(Angle + thetar) * 0.1;
+    xr = 1*(cos(Angle) * 1 + 40/9); yr = 1*(sin(Angle) * 1); %zr = cos(Angle + thetar) * 0.1;
 
     PreData1 = normrnd(0,Sigma, [n1, D]); PreData2 = normrnd(0,Sigma, [n2, D]);
     PreData3 = normrnd(0,Sigma, [n3, D]); PreData4 = normrnd(0,Sigma, [n4, D]);
@@ -177,19 +178,40 @@ if strcmp(DATAopts.Shape, 'Two Curved Surfaces')
     Rotation2(3,1) = -sin(Theta(2)); Rotation2(3,3) = cos(Theta(2));
     
     %tts = (pi/2)-asin(0.5/R) + 2*asin(0.5/R)*rand(n1, 2);
-    tts = (pi/2)-0.25/R + 2*0.25/R*rand(n1, 2);
+    tts = (pi/2)-0.5/R + 2*0.5/R*rand(n1, 2);
     %tt1=(pi/2)*rand(n1,1)+pi/4; tt2=(pi/2)*rand(n2,1)+pi/4;
-    Effective1 = [R*cos(tts(:,1)) -.25+0.5*rand(n1,1) R*sin(tts(:,1))];  Noise1 = normrnd(0,Sigma, [n1, D]);
+    Effective1 = [R*cos(tts(:,1)) -.25+.5*rand(n1,1) R*sin(tts(:,1))];  Noise1 = normrnd(0,Sigma, [n1, D]);
     Data1 = Noise1; Data1(:, [1 2 3]) = Data1(:, [1 2 3]) + Effective1;
-    Effective2 = [R*cos(tts(:,2)) -.25+0.5*rand(n2,1) R*sin(tts(:,2))];  Noise2 = normrnd(0,Sigma, [n2, D]);
+    Effective2 = [R*cos(tts(:,2)) -.25+.5*rand(n2,1) R*sin(tts(:,2))];  Noise2 = normrnd(0,Sigma, [n2, D]);
     Data2 = Noise2; Data2(:, [1 2 3]) = Data2(:, [1 2 3]) + Effective2;
     Data1 = Data1 * Rotation1; Data2 = Data2 * Rotation2; 
-    Data2(:,1) = Data2(:,1)+R*sin(Theta(2)); Data2(:,3) = Data2(:,3)+R-R*cos(Theta(2)); 
+    Data2(:,1) = Data2(:,1)+R*sin(Theta(2)); Data2(:,3) = Data2(:,3)+(R-R*cos(Theta(2))); 
     Data = cat(1, Data1, Data2); LabelsGT = [repelem(1, n1) repelem(2, n2)]';
-    %if D == 3
-    %    figure; plot3(Data(1:n1,1),Data(1:n1,2),Data(1:n1,3), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),Data(n1+1:n1+n2,3),'.');
-    %    axis equal; axis off
-    %end
+    if D == 3
+        figure; plot3(Data(1:n1,1),Data(1:n1,2),Data(1:n1,3), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),Data(n1+1:n1+n2,3),'.');
+        axis equal; axis off; xlim([-.15, .2]); zlim([-.15, .2]);
+    end
+end
+
+if strcmp(DATAopts.Shape, 'Two Curved Cubes')
+    n1=DATAopts.Number(1); n2=DATAopts.Number(2); D = DATAopts.AmbDim; 
+    Sigma = DATAopts.NoiseSigma; Theta = DATAopts.Angles; R = 1/DATAopts.Curvature;
+    
+    Rotation1 = eye(D, D); Rotation1(1,1) = cos(Theta(1));  Rotation1(1,4) = sin(Theta(1));
+    Rotation1(4,1) = -sin(Theta(1)); Rotation1(4,4) = cos(Theta(1));
+    Rotation2 = eye(D, D); Rotation2(1,1) = cos(Theta(2));  Rotation2(1,4) = sin(Theta(2));
+    Rotation2(4,1) = -sin(Theta(2)); Rotation2(4,4) = cos(Theta(2));
+    
+    %tts = (pi/2)-asin(0.5/R) + 2*asin(0.5/R)*rand(n1, 2);
+    tts = (pi/2)-0.5/R + 2*0.5/R*rand(n1, 2);
+    %tt1=(pi/2)*rand(n1,1)+pi/4; tt2=(pi/2)*rand(n2,1)+pi/4;
+    Effective1 = [R*cos(tts(:,1)) -.25+.5*rand(n1,1) -.25+.5*rand(n1,1) R*sin(tts(:,1))];  Noise1 = normrnd(0,Sigma, [n1, D]);
+    Data1 = Noise1; Data1(:, [1 2 3 4]) = Data1(:, [1 2 3 4]) + Effective1;
+    Effective2 = [R*cos(tts(:,2)) -.25+.5*rand(n2,1) -.25+.5*rand(n1,1) R*sin(tts(:,2))];  Noise2 = normrnd(0,Sigma, [n2, D]);
+    Data2 = Noise2; Data2(:, [1 2 3 4]) = Data2(:, [1 2 3 4]) + Effective2;
+    Data1 = Data1 * Rotation1; Data2 = Data2 * Rotation2; 
+    Data2(:,1) = Data2(:,1)+R*sin(Theta(2)); Data2(:,4) = Data2(:,4)+R-R*cos(Theta(2)); 
+    Data = cat(1, Data1, Data2); LabelsGT = [repelem(1, n1) repelem(2, n2)]';
 end
 
 if strcmp(DATAopts.Shape, 'Two Planes')
@@ -208,6 +230,7 @@ if strcmp(DATAopts.Shape, 'Two Planes')
     %if D == 3
     %    figure; plot3(Data(1:n1,1),Data(1:n1,2),Data(1:n1,3), '.', Data(n1+1:n1+n2,1),Data(n1+1:n1+n2,2),Data(n1+1:n1+n2,3),'.');
     %    xlabel('x'); ylabel('y'); zlabel('z'); axis equal; axis off; 
+    %    xlim([-.7, .7]);ylim([-.7, .7]);zlim([-.7, .7]);
     %end
 end
 
